@@ -11,5 +11,5 @@ https://www.npmjs.com/package/@tivio/sdk-js
 
 ```bash
 yarn install
-yarn start
+yarn dev
 ```

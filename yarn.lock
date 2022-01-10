@@ -379,10 +379,10 @@
     "@sentry/types" "6.16.1"
     tslib "^1.9.3"
 
-"@tivio/sdk-js@^1.0.0-alpha":
-  version "1.0.0-alpha"
-  resolved "https://registry.yarnpkg.com/@tivio/sdk-js/-/sdk-js-1.0.0-alpha.tgz#3d768dcf458b27b02bd82673813f581b7a25bd1d"
-  integrity sha512-9rkChSMH80F0Tq+o2gtkY6d6QEHRtHDL74hasbsGJAjkr4cGIaddWx9kok/LAQo+yVQs5wwRlROX8P/xXMz3Gg==
+"@tivio/sdk-js@^1.0.0-alpha2":
+  version "1.0.0-alpha2"
+  resolved "https://registry.yarnpkg.com/@tivio/sdk-js/-/sdk-js-1.0.0-alpha2.tgz#abf6849934d311b590be74e1ddaaa79dcc9dd9ad"
+  integrity sha512-1i+L6tCjrQI3PV2pS7bPpaBIqhaPuzOxVOo4SMdCRXruHJkrqNHLabWnwcwSD2MUF5ly8VsDfkDwnJJAXmtjnA==
   dependencies:
     "@sentry/browser" "^6.1.0"
     firebase "^8.2.3"

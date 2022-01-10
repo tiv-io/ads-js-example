@@ -8,7 +8,6 @@ const tivio = createTivio()
 
 const conf = {
     secret: 'XXXXXXXXX', // TODO: replace with your secret
-    resolverUrl: 'https://tivio-resolver.tiv.io/serveBundle/resolver3.js',
     deviceCapabilities: [],
     currency: 'EUR',
     verbose: true,
