@@ -80,7 +80,7 @@ function adMetadataListener(metadata: AdMetadata) {
     console.log('AdMetadata: ', metadata)
 }
 
-// =============== internal player implementation ===============
+// =============== Internal player implementation + player implementation ===============
 
 let videoElement: HTMLVideoElement | null = null
 
@@ -88,19 +88,24 @@ window.onload = () => {
     videoElement = document.getElementsByTagName('video')[0]
 }
 
+/**
+ * Internal player implementation which handles low-level player
+ */
 class InternalPlayerImplementation {
+    _prefix = 'InternalPlayerImplementation'
+
     play() {
-        console.log('play internal')
+        console.log(`${this._prefix}: play`)
 
         videoElement?.play()
     }
     pause() {
-        console.log('pause internal')
+        console.log(`${this._prefix}: pause`)
 
         videoElement?.pause()
     }
     seekTo(ms: number) {
-        console.log('seekTo internal')
+        console.log(`${this._prefix}: seekTo`)
 
         const seconds = ms / 1000
 
@@ -109,14 +114,14 @@ class InternalPlayerImplementation {
         }
     }
     resetVideo() {
-        console.log('resetVideo internal')
+        console.log(`${this._prefix}: resetVideo`)
 
         videoElement?.pause()
         videoElement?.removeAttribute('src')
         videoElement?.load()
     }
     setSource(source: Source | null) {
-        console.log('setSource internal')
+        console.log(`${this._prefix}: setSource`)
 
         if (!source) {
             return
@@ -132,34 +137,58 @@ class InternalPlayerImplementation {
     }
 }
 
+/**
+ * Player implementations which should be used in the whole app.
+ * Note that setSource and seekTo have to use tivioPlayerWrapper.
+ */
+class PlayerImplementation {
+    _prefix = 'PlayerImplementation'
+
+    play() {
+        console.log(`${this._prefix}: play`)
+        internalPlayerImplementation.play()
+    }
+    pause() {
+        console.log(`${this._prefix}: pause`)
+        internalPlayerImplementation?.pause()
+    }
+    seekTo(ms: number) {
+        console.log(`${this._prefix}: seekTo: seeking to position ${ms} through tivioPlayerWrapper`)
+        tivioPlayerWrapper?.seekTo(ms)
+    }
+    setSource(source: Source | null) {
+        console.log(`${this._prefix}: setSource: setting source through tivioPlayerWrapper`)
+        tivioPlayerWrapper?.setSource(source)
+    }
+}
+
 const internalPlayerImplementation = new InternalPlayerImplementation()
+const playerImplementation = new PlayerImplementation()
 
 // =============== UI buttons handling ===============
 
 // @ts-ignore
 window.unpauseVideo = () => {
-    console.log('Unpausing video')
-    internalPlayerImplementation.play()
+    console.log('onClick: unpausing video')
+    playerImplementation.play()
 }
 
 // @ts-ignore
 window.pauseVideo = () => {
-    console.log('Pausing video')
-    internalPlayerImplementation.pause()
+    console.log('onClick: pausing video')
+    playerImplementation.pause()
 }
 
 // @ts-ignore
 window.jumpForward = () => {
     const ms = Number(videoElement?.currentTime) * 1000 + 2000
-
-    console.log(`Seeking to ${ms} through tivioPlayerWrapper`)
-
-    tivioPlayerWrapper?.seekTo(ms)
+    console.log(`onClick: seeking to ${ms}`)
+    playerImplementation.seekTo(ms)
 }
 
 // @ts-ignore
 window.setSourceTivio = () => {
-    console.log('Setting source through tivioPlayerWrapper')
+    console.log('onClick: setting source')
 
     const source: Source | null = {
         type: 'tv_program',
@@ -184,5 +213,5 @@ window.setSourceTivio = () => {
         positionMs: 0,
     }
 
-    tivioPlayerWrapper?.setSource(source)
+    playerImplementation.setSource(source)
 }
