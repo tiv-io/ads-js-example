@@ -1,0 +1,25 @@
+{
+  "name": "@tivio/example-sdk-js",
+  "version": "1.0.0",
+  "description": "Minimal example of Tivio SDK/JS",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack serve"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^14.14.37",
+    "date-format": "^3.0.0",
+    "firebase": "^8.4.1",
+    "mobx": "^6.2.0",
+    "vast-client": "^3.1.1",
+    "webpack": "^5.32.0",
+    "webpack-cli": "^4.6.0",
+    "webpack-merge": "^5.7.3",
+    "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^4.5.2"
+  }
+}

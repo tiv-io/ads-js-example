@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "lib": ["dom", "es7"],
+        "outDir": "./dist",
+        "sourceMap": true,
+        "declaration": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "esModuleInterop": true,
+        "jsx": "react",
+        "baseUrl": ".",
+        "typeRoots": [
+            "node_modules/@types",
+            "src/typings"
+        ]
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ],
+    "compileOnSave": false
+}
