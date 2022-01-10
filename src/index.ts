@@ -10,7 +10,7 @@ const conf = {
     secret: 'XXXXXXXXX', // TODO: replace with your secret
     deviceCapabilities: [],
     currency: 'EUR',
-    verbose: true,
+    // verbose: true,
 }
 
 let tivioPlayerWrapper: TivioPlayerWrapper | null = null
@@ -42,7 +42,7 @@ tivio(conf)
     })
 
 function getPlayerWrapper(api: Api) {
-    return api?.createPlayerWrapper?.({
+    return api.createPlayerWrapper?.({
         setSource: (source: Source | null) => {
             console.log('Received source from Tivio', source?.uri)
             internalPlayerImplementation.setSource(source)
@@ -72,12 +72,61 @@ function registerVideoListeners() {
     videoElement?.addEventListener('error', () => {
         console.log('Signalling error to Tivio')
 
-        tivioPlayerWrapper?.reportLoadError(new Error('Failed to play'))
+        tivioPlayerWrapper?.reportError(new Error('Failed to play'))
     })
 }
 
-function adMetadataListener(metadata: AdMetadata) {
-    console.log('AdMetadata: ', metadata)
+function getDynamicElements() {
+    return {
+        subType: document.getElementById('subType'),
+        order: document.getElementById('order'),
+        totalCount: document.getElementById('totalCount'),
+        secondsToSkippable: document.getElementById('secondsToSkippable'),
+        secondsToEnd: document.getElementById('secondsToEnd'),
+        canSkip: document.getElementById('canSkip'),
+        isSkippable: document.getElementById('isSkippable'),
+        skip: document.getElementById('skip'),
+    } as {[key: string]: HTMLElement | HTMLButtonElement}
+}
+
+let getDynamicElementsCalled = false
+let dynamicElements: {[key: string]: HTMLElement | HTMLButtonElement}
+
+function adMetadataListener(adMetadata: AdMetadata) {
+    console.log('AdMetadata: ', adMetadata)
+
+    if (!getDynamicElementsCalled) {
+        dynamicElements = getDynamicElements()
+        getDynamicElementsCalled = true
+    }
+
+    if (adMetadata) {
+        dynamicElements.subType.innerHTML = adMetadata.subType
+        dynamicElements.order.innerHTML = typeof adMetadata.order === 'number'
+            ? adMetadata.order.toString()
+            : 'N/A'
+        dynamicElements.totalCount.innerHTML = typeof adMetadata.totalCount === 'number'
+            ? adMetadata.totalCount.toString()
+            : 'N/A'
+        dynamicElements.secondsToSkippable.innerHTML = typeof adMetadata.secondsToSkippable === 'number'
+            ? adMetadata.secondsToSkippable.toString()
+            : 'N/A'
+        dynamicElements.secondsToEnd.innerHTML = adMetadata.secondsToEnd.toString()
+        dynamicElements.canSkip.innerHTML = adMetadata.canTriggerSkip ? 'true' : 'false'
+        dynamicElements.isSkippable.innerHTML = adMetadata.isSkippable ? 'true' : 'false'
+        dynamicElements.skip.onclick = adMetadata.canTriggerSkip ? adMetadata.skip : () => {}
+        (dynamicElements.skip as HTMLButtonElement).disabled = adMetadata.canTriggerSkip ? false : true
+    } else {
+        dynamicElements.subType.innerHTML = ''
+        dynamicElements.order.innerHTML = ''
+        dynamicElements.totalCount.innerHTML = ''
+        dynamicElements.secondsToSkippable.innerHTML = ''
+        dynamicElements.secondsToEnd.innerHTML = ''
+        dynamicElements.canSkip.innerHTML = ''
+        dynamicElements.isSkippable.innerHTML = ''
+        dynamicElements.skip.onclick = () => {}
+        (dynamicElements.skip as HTMLButtonElement).disabled = true
+    }
 }
 
 // =============== Internal player implementation + player implementation ===============
@@ -206,7 +255,7 @@ window.setSourceTivio = () => {
         // Prima MAX
         // Prima Krimi
         // Prima Star
-        channelName: 'Prima HD',
+        channelName: 'Prima Love',
         // In order to load markers, we need from, to
         epgFrom: new Date('2022-01-10T12:00:00'),
         epgTo: new Date('2022-01-10T13:40:00'),

@@ -21,13 +21,22 @@
             <video
                 style="
                     background-color: #eeeeee;
-                    height: 420;"
+                    height: 420px;"
             ></video>
             <div>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="setSourceTivio()">Set source</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="pauseVideo()">Pause</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="unpauseVideo()">Unpause</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="jumpForward()">+2s >></button>
+            </div>
+            <div>
+                <div>Ad number <span id="order">N/A</span> from <span id="totalCount">N/A</span></div>
+                <div>Subtype: <span id="subType">N/A</span></div>
+                <div>Can be skipped in: <span id="secondsToSkippable">N/A</span> s</div>
+                <div>Will finish in: <span id="secondsToEnd">N/A</span> s</div>
+                <div>Can skip: <span id="canSkip">N/A</span></div>
+                <div>Is skippable: <span id="isSkippable">N/A</span></div>
+                <button id="skip" disabled>Skip ad</button>
             </div>
         </div>
     </body>
