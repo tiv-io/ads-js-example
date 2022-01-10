@@ -1,7 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
 const HtmlWebPackPlugin = require('html-webpack-plugin')
-const dotenv = require('dotenv')
 const { version } = require('./package.json')
 
 module.exports = {
