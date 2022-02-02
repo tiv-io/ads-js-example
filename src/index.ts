@@ -11,6 +11,7 @@ const conf = {
     deviceCapabilities: [],
     currency: 'EUR',
     // verbose: true,
+    enableSentry: false,
 }
 
 let tivioPlayerWrapper: TivioPlayerWrapper | null = null
@@ -180,6 +181,11 @@ class InternalPlayerImplementation {
 
         if (videoElement) {
             videoElement.src = source.uri
+
+            if ('startFromPosition' in source && source.startFromPosition) {
+                // TODO use seekTo
+                videoElement.currentTime = source.startFromPosition / 1000
+            }
         }
 
         this.play()
@@ -238,6 +244,10 @@ window.jumpForward = () => {
 // @ts-ignore
 window.setSourceTivio = () => {
     console.log('onClick: setting source')
+    const START_OVERLAP = 10 * 60 * 1000
+    const epgFrom = new Date('2022-01-10T12:00:00')
+    const epgTo = new Date('2022-01-10T13:40:00')
+    const streamStart = new Date(epgFrom.getTime() - START_OVERLAP)
 
     const source: Source | null = {
         type: 'tv_program',
@@ -257,9 +267,11 @@ window.setSourceTivio = () => {
         // Prima Star
         channelName: 'Prima Love',
         // In order to load markers, we need from, to
-        epgFrom: new Date('2022-01-10T12:00:00'),
-        epgTo: new Date('2022-01-10T13:40:00'),
-        positionMs: 0,
+        epgFrom,
+        epgTo,
+        streamStart,
+        startFromPosition: START_OVERLAP,
+        // continueFromPosition: 15 * 60 * 1000,
     }
 
     playerImplementation.setSource(source)
