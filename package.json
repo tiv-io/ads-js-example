@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tivio/sdk-js": "2.0.0-alpha3",
+    "@tivio/sdk-js": "2.0.0",
     "@types/node": "^14.14.37",
     "date-format": "^3.0.0",
     "firebase": "^8.4.1",
