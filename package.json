@@ -1,29 +1,26 @@
 {
-  "name": "@tivio/example-sdk-js",
-  "version": "1.0.0",
-  "description": "Minimal example of Tivio SDK/JS",
-  "main": "index.js",
-  "scripts": {
-    "dev": "webpack serve"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@tivio/sdk-js": "2.0.0",
-    "@types/node": "^14.14.37",
-    "date-format": "^3.0.0",
-    "firebase": "^8.4.1",
-    "mobx": "^6.2.0",
-    "vast-client": "^3.1.1",
-    "webpack": "^5.32.0",
-    "webpack-cli": "^4.6.0",
-    "webpack-merge": "^5.7.3",
-    "xml2js": "^0.4.23"
-  },
-  "devDependencies": {
-    "html-webpack-plugin": "^4.5.2",
-    "ts-loader": "^9.2.6",
-    "typescript": "^4.4.3",
-    "webpack-dev-server": "^3.11.0"
-  }
+    "name": "@tivio/example-sdk-js",
+    "version": "1.0.0",
+    "description": "Minimal example of Tivio SDK/JS",
+    "main": "index.js",
+    "scripts": {
+        "dev": "webpack serve",
+        "build": "webpack"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@tivio/sdk-js": "2.0.0",
+        "core-js": "^3.21.0",
+        "webpack": "^5.32.0",
+        "webpack-cli": "^4.6.0",
+        "webpack-merge": "^5.7.3",
+        "xml2js": "^0.4.23"
+    },
+    "devDependencies": {
+        "html-webpack-plugin": "^4.5.2",
+        "ts-loader": "^9.2.6",
+        "typescript": "^4.4.3",
+        "webpack-dev-server": "^3.11.0"
+    }
 }

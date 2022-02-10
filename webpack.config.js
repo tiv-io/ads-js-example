@@ -21,6 +21,21 @@ module.exports = {
                     loader: 'ts-loader',
                 },
             },
+            {
+                /**
+                 * Transpile libraries which are not ES5 to ES5
+                 *
+                 * This step is necessary for legacy devices such as Arris STB.
+                 */
+                test: /\.(js|mjs)$/,
+                include: /node_modules\/(enum-for|deepcopy)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env'],
+                    },
+                },
+            },
         ],
     },
     resolve: {
@@ -40,4 +55,5 @@ module.exports = {
             inject: 'head',
         }),
     ],
+    target: ['web', 'es5'],
 }

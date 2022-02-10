@@ -1,3 +1,5 @@
+import 'core-js/actual'
+
 import { createPlayerWrapper, createTivio, PlayerWrapperEventType } from '@tivio/sdk-js'
 
 import type { Api, TivioPlayerWrapper, Source, AdMetadata } from '@tivio/sdk-js'
