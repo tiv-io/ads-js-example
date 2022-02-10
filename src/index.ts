@@ -18,7 +18,7 @@ const conf = {
 
 const tivioPlayerWrapper: TivioPlayerWrapper = createPlayerWrapper({
     setSource: (source: Source | null) => {
-        console.log('Received source from Tivio', source?.uri)
+        console.log(`Received source from Tivio: ${source?.uri}`)
         internalPlayerImplementation.setSource(source)
     },
     seekTo: (ms: number) => {
@@ -30,8 +30,8 @@ const tivioPlayerWrapper: TivioPlayerWrapper = createPlayerWrapper({
 tivioPlayerWrapper.addEventListener(PlayerWrapperEventType.adMetadata, adMetadataListener)
 
 tivio(conf)
-    .then(async (api) => {
-        console.log('Tivio API:', api)
+    .then(async (api: Api) => {
+        console.log(`Tivio API: ${api}`)
 
         if (!api) {
             console.error('Initialization failed.')
@@ -39,7 +39,7 @@ tivio(conf)
         }
 
         if (api.error) {
-            console.error('Tivio init error:', api.error)
+            console.error(`Tivio init error: ${api.error}`, )
             return
         }
 
