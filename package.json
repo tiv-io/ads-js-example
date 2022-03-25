@@ -10,7 +10,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@tivio/sdk-js": "2.0.0",
+        "@tivio/sdk-js": "2.3.2",
         "core-js": "^3.21.0",
         "webpack": "^5.32.0",
         "webpack-cli": "^4.6.0",
