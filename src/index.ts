@@ -238,7 +238,7 @@ window.pauseVideo = () => {
 
 // @ts-ignore
 window.jumpForward = () => {
-    const ms = Number(videoElement?.currentTime) * 1000 + 2000
+    const ms = Number(videoElement?.currentTime) * 1000 + 10000
     console.log(`onClick: seeking to ${ms}`)
     playerImplementation.seekTo(ms)
 }
