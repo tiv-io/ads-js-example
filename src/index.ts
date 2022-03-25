@@ -135,7 +135,12 @@ function adMetadataListener(adMetadata: AdMetadata) {
 
 let videoElement: HTMLVideoElement | null = null
 
+let internalPlayerImplementation: InternalPlayerImplementation
+let playerImplementation: PlayerImplementation
+
 window.onload = () => {
+    internalPlayerImplementation = new InternalPlayerImplementation()
+    playerImplementation = new PlayerImplementation()
     videoElement = document.getElementsByTagName('video')[0]
     registerVideoListeners()
 }
@@ -218,9 +223,6 @@ class PlayerImplementation {
         tivioPlayerWrapper.setSource(source)
     }
 }
-
-const internalPlayerImplementation = new InternalPlayerImplementation()
-const playerImplementation = new PlayerImplementation()
 
 // =============== UI buttons handling ===============
 
