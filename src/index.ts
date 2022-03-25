@@ -248,9 +248,10 @@ window.jumpForward = () => {
 // @ts-ignore
 window.setSourceTivio = () => {
     console.log('onClick: setting source')
-    const START_OVERLAP = 10 * 60 * 1000
-    const epgFrom = new Date('2022-01-10T12:00:00')
-    const epgTo = new Date('2022-01-10T13:40:00')
+
+    const START_OVERLAP = 1000 * 60 * 2
+    const epgFrom = new Date('2022-02-16T12:00:00')
+    const epgTo = new Date('2022-02-16T13:40:00')
     const streamStart = new Date(epgFrom.getTime() - START_OVERLAP)
 
     const source: Source | null = {
@@ -269,7 +270,7 @@ window.setSourceTivio = () => {
         // Prima MAX
         // Prima Krimi
         // Prima Star
-        channelName: 'Prima Love',
+        channelName: 'Tivio Test',
         // In order to load markers, we need from, to
         epgFrom,
         epgTo,
