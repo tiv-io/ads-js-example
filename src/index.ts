@@ -1,22 +1,19 @@
 import 'core-js/actual'
 
-import { createPlayerWrapper, createTivio, PlayerWrapperEventType } from '@tivio/sdk-js'
+import { createPlayerWrapper, createTivio, PlayerWrapperEventType, getProgramTimestamps } from '@tivio/sdk-js'
 
-import type { Api, TivioPlayerWrapper, Source, AdMetadata } from '@tivio/sdk-js'
+import type { Conf, Api, Source, AdMetadata } from '@tivio/sdk-js'
 
 // =============== Tivio initialization, getting player wrapper, registering listeners ===============
 
 const tivio = createTivio()
 
-const conf = {
+const conf: Conf = {
     secret: 'XXXXXXXXX', // TODO: replace with your secret
-    deviceCapabilities: [],
-    currency: 'EUR',
-    verbose: true,
     enableSentry: false,
 }
 
-const tivioPlayerWrapper: TivioPlayerWrapper = createPlayerWrapper({
+const tivioPlayerWrapper = createPlayerWrapper({
     setSource: (source: Source | null) => {
         console.log(`Received source from Tivio: ${source?.uri}`)
         internalPlayerImplementation.setSource(source)
@@ -44,6 +41,12 @@ tivio(conf)
         }
 
         console.log('Initialization OK')
+
+        // basic example of getProgramTimestamps usage
+        const epgFrom = new Date('2022-02-16T12:00:00')
+        const epgTo = new Date('2022-02-16T13:40:00')
+
+        console.log('timestamps', await getProgramTimestamps('Tivio Test', epgFrom, epgTo))
     })
     .catch((error) => {
         console.log('Something wrong')
