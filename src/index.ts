@@ -1,8 +1,8 @@
 import 'core-js/actual'
 
-import { createPlayerWrapper, createTivio, PlayerWrapperEventType, getProgramTimestamps } from '@tivio/sdk-js'
+import { createPlayerWrapper, createTivio, PlayerWrapperEventType, getProgramTimestamps } from '@tivio/ads-js'
 
-import type { Conf, Api, Source, AdMetadata } from '@tivio/sdk-js'
+import type { Conf, Api, Source, AdMetadata } from '@tivio/ads-js'
 
 // =============== Tivio initialization, getting player wrapper, registering listeners ===============
 

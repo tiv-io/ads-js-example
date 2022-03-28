@@ -1,10 +1,10 @@
-# Tivio sdk-js example
+# Tivio ads-js example
 
-The purpose of this example is to show/test basic usage of `@tivio/sdk-js`.
+The purpose of this example is to show/test basic usage of `@tivio/ads-js`.
 
 ## Library and doc
 
-https://www.npmjs.com/package/@tivio/sdk-js
+https://www.npmjs.com/package/@tivio/ads-js
 
 
 ## Get started
