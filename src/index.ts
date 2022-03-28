@@ -41,12 +41,6 @@ tivio(conf)
         }
 
         console.log('Initialization OK')
-
-        // basic example of getProgramTimestamps usage
-        const epgFrom = new Date('2022-02-16T12:00:00')
-        const epgTo = new Date('2022-02-16T13:40:00')
-
-        console.log('timestamps', await getProgramTimestamps('Tivio Test', epgFrom, epgTo))
     })
     .catch((error) => {
         console.log('Something wrong')
@@ -91,19 +85,14 @@ function getDynamicElements() {
         canSkip: document.getElementById('canSkip'),
         isSkippable: document.getElementById('isSkippable'),
         skip: document.getElementById('skip'),
+        programTimestamps: document.getElementById('programTimestamps'),
     } as {[key: string]: HTMLElement | HTMLButtonElement}
 }
 
-let getDynamicElementsCalled = false
 let dynamicElements: {[key: string]: HTMLElement | HTMLButtonElement}
 
 function adMetadataListener(adMetadata: AdMetadata) {
     console.log('AdMetadata: ', adMetadata)
-
-    if (!getDynamicElementsCalled) {
-        dynamicElements = getDynamicElements()
-        getDynamicElementsCalled = true
-    }
 
     if (adMetadata) {
         dynamicElements.subType.innerHTML = adMetadata.subType
@@ -146,6 +135,7 @@ window.onload = () => {
     playerImplementation = new PlayerImplementation()
     videoElement = document.getElementsByTagName('video')[0]
     registerVideoListeners()
+    dynamicElements = getDynamicElements()
 }
 
 /**
@@ -242,20 +232,21 @@ window.pauseVideo = () => {
 }
 
 // @ts-ignore
-window.jumpForward = () => {
-    const ms = Number(videoElement?.currentTime) * 1000 + 10000
+window.jump = (stepMs: number) => {
+    const ms = Number(videoElement?.currentTime) * 1000 + stepMs
     console.log(`onClick: seeking to ${ms}`)
     playerImplementation.seekTo(ms)
 }
+
+const EPG_FROM = new Date('2022-02-16T12:00:00')
+const EPG_TO = new Date('2022-02-16T13:40:00')
 
 // @ts-ignore
 window.setSourceTivio = () => {
     console.log('onClick: setting source')
 
     const START_OVERLAP = 1000 * 60 * 2
-    const epgFrom = new Date('2022-02-16T12:00:00')
-    const epgTo = new Date('2022-02-16T13:40:00')
-    const streamStart = new Date(epgFrom.getTime() - START_OVERLAP)
+    const streamStart = new Date(EPG_FROM.getTime() - START_OVERLAP)
 
     const source: Source | null = {
         type: 'tv_program',
@@ -275,12 +266,19 @@ window.setSourceTivio = () => {
         // Prima Star
         channelName: 'Tivio Test',
         // In order to load markers, we need from, to
-        epgFrom,
-        epgTo,
+        epgFrom: EPG_FROM,
+        epgTo: EPG_TO,
         streamStart,
         startFromPosition: START_OVERLAP,
         // continueFromPosition: 15 * 60 * 1000,
     }
 
     playerImplementation.setSource(source)
+}
+
+// @ts-ignore
+window.getProgramTimestamps = async () => {
+    const programTimestamps = await getProgramTimestamps('Tivio Test', EPG_FROM, EPG_TO)
+
+    dynamicElements.programTimestamps.innerHTML = JSON.stringify(programTimestamps)
 }

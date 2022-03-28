@@ -27,7 +27,9 @@
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="setSourceTivio()">Set source</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="pauseVideo()">Pause</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="unpauseVideo()">Unpause</button>
-                <button style="margin: 20px 7px; cursor: pointer;" onClick="jumpForward()">+10s >></button>
+                <button style="margin: 20px 7px; cursor: pointer;" onClick="jumpBackward(-10000)">&lt;&lt; -10s</button>
+                <button style="margin: 20px 7px; cursor: pointer;" onClick="jumpForward(10000)">+10s &gt;&gt;</button>
+                <button style="margin: 20px 7px; cursor: pointer;" onClick="getProgramTimestamps()">Get program timestamps</button>
             </div>
             <div>
                 <div>Ad number <span id="order">N/A</span> from <span id="totalCount">N/A</span></div>
@@ -37,6 +39,7 @@
                 <div>Can skip: <span id="canSkip">N/A</span></div>
                 <div>Is skippable: <span id="isSkippable">N/A</span></div>
                 <button id="skip" disabled>Skip ad</button>
+                <div>Program timestamps: <span id="programTimestamps">N/A</span></div>
             </div>
         </div>
     </body>
