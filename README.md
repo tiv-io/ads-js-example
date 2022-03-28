@@ -1,6 +1,6 @@
-# Tivio sdk-js example 1 - player wrapper
+# Tivio sdk-js example
 
-The purpose of this example is to show/test basic usage of `@tivio/sdk-js`. It covers only few sdk features, please feel free to extend it.
+The purpose of this example is to show/test basic usage of `@tivio/sdk-js`.
 
 ## Library and doc
 
