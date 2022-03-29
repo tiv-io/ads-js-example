@@ -6,8 +6,6 @@ import type { Conf, Api, Source, AdMetadata } from '@tivio/ads-js'
 
 // =============== Tivio initialization, getting player wrapper, registering listeners ===============
 
-const tivio = createTivio()
-
 const conf: Conf = {
     secret: 'XXXXXXXXX', // TODO: replace with your secret
     enableSentry: false,
@@ -26,10 +24,8 @@ const tivioPlayerWrapper = createPlayerWrapper({
 
 tivioPlayerWrapper.addEventListener(PlayerWrapperEventType.adMetadata, adMetadataListener)
 
-tivio(conf)
+createTivio(conf)
     .then(async (api: Api) => {
-        console.log(`Tivio API: ${api}`)
-
         if (!api) {
             console.error('Initialization failed.')
             return
