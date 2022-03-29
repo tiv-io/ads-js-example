@@ -1,28 +1,16 @@
 import 'core-js/actual'
 
-import { createPlayerWrapper, createTivio, PlayerWrapperEventType, getProgramTimestamps } from '@tivio/ads-js'
+import { createTivio, getProgramTimestamps } from '@tivio/ads-js'
+
+import { Player } from './Player'
 
 import type { Conf, Api, Source, AdMetadata } from '@tivio/ads-js'
-
-// =============== Tivio initialization, getting player wrapper, registering listeners ===============
+// =============== Tivio initialization ===============
 
 const conf: Conf = {
     secret: 'XXXXXXXXX', // TODO: replace with your secret
     enableSentry: false,
 }
-
-const tivioPlayerWrapper = createPlayerWrapper({
-    setSource: (source: Source | null) => {
-        console.log(`Received source from Tivio: ${source?.uri}`)
-        internalPlayerImplementation.setSource(source)
-    },
-    seekTo: (ms: number) => {
-        console.log(`Received seek from Tivio: ${ms} ms`)
-        internalPlayerImplementation.seekTo(ms)
-    },
-})
-
-tivioPlayerWrapper.addEventListener(PlayerWrapperEventType.adMetadata, adMetadataListener)
 
 createTivio(conf)
     .then(async (api: Api) => {
@@ -38,38 +26,12 @@ createTivio(conf)
 
         console.log('Initialization OK')
     })
-    .catch((error) => {
+    .catch((error: Error) => {
         console.log('Something wrong')
         console.error(error)
     })
 
-
-let lastMs: number
-
-function registerVideoListeners() {
-    videoElement?.addEventListener('timeupdate', e => {
-        const ms = Number(videoElement?.currentTime) * 1000
-
-        if (!lastMs || Math.abs(ms - lastMs) > 900) {
-            lastMs = ms
-            console.log(`Signalling timeupdate to Tivio ${ms} ms`)
-            tivioPlayerWrapper.reportTimeProgress(ms)
-        }
-
-    })
-
-    videoElement?.addEventListener('ended', () => {
-        console.log('Signalling playback ended to Tivio')
-
-        tivioPlayerWrapper.reportPlaybackEnded()
-    })
-
-    videoElement?.addEventListener('error', () => {
-        console.log('Signalling error to Tivio')
-
-        tivioPlayerWrapper.reportError(new Error('Failed to play'))
-    })
-}
+// =============== app init, creating player, registering listener ===============
 
 function getDynamicElements() {
     return {
@@ -119,98 +81,21 @@ function adMetadataListener(adMetadata: AdMetadata) {
     }
 }
 
-// =============== Internal player implementation + player implementation ===============
 
 let videoElement: HTMLVideoElement | null = null
 
-let internalPlayerImplementation: InternalPlayerImplementation
-let playerImplementation: PlayerImplementation
+let player: Player
 
 window.onload = () => {
-    internalPlayerImplementation = new InternalPlayerImplementation()
-    playerImplementation = new PlayerImplementation()
     videoElement = document.getElementsByTagName('video')[0]
-    registerVideoListeners()
+
+    if (!videoElement) {
+        throw new Error('Video element not found!');
+    }
+
+    player = new Player(videoElement)
     dynamicElements = getDynamicElements()
-}
-
-/**
- * Internal player implementation which handles low-level player
- */
-class InternalPlayerImplementation {
-    _prefix = 'InternalPlayerImplementation'
-
-    play() {
-        console.log(`${this._prefix}: play`)
-
-        videoElement?.play()
-    }
-    pause() {
-        console.log(`${this._prefix}: pause`)
-
-        videoElement?.pause()
-    }
-    seekTo(ms: number) {
-        console.log(`${this._prefix}: seekTo`)
-
-        const seconds = ms / 1000
-
-        if (videoElement) {
-            videoElement.currentTime = seconds
-        }
-    }
-    resetVideo() {
-        console.log(`${this._prefix}: resetVideo`)
-
-        videoElement?.pause()
-        videoElement?.removeAttribute('src')
-        videoElement?.load()
-    }
-    setSource(source: Source | null) {
-        console.log(`${this._prefix}: setSource`)
-
-        if (!source) {
-            return
-        }
-
-        this.resetVideo()
-
-        if (videoElement) {
-            videoElement.src = source.uri
-
-            if ('startFromPosition' in source && source.startFromPosition) {
-                // TODO use seekTo
-                videoElement.currentTime = source.startFromPosition / 1000
-            }
-        }
-
-        this.play()
-    }
-}
-
-/**
- * Player implementations which should be used in the whole app.
- * Note that setSource and seekTo have to use tivioPlayerWrapper.
- */
-class PlayerImplementation {
-    _prefix = 'PlayerImplementation'
-
-    play() {
-        console.log(`${this._prefix}: play`)
-        internalPlayerImplementation.play()
-    }
-    pause() {
-        console.log(`${this._prefix}: pause`)
-        internalPlayerImplementation?.pause()
-    }
-    seekTo(ms: number) {
-        console.log(`${this._prefix}: seekTo: seeking to position ${ms} through tivioPlayerWrapper`)
-        tivioPlayerWrapper.seekTo(ms)
-    }
-    setSource(source: Source | null) {
-        console.log(`${this._prefix}: setSource: setting source through tivioPlayerWrapper`)
-        tivioPlayerWrapper.setSource(source)
-    }
+    player.addMetadataListenerListener(adMetadataListener)
 }
 
 // =============== UI buttons handling ===============
@@ -218,20 +103,20 @@ class PlayerImplementation {
 // @ts-ignore
 window.unpauseVideo = () => {
     console.log('onClick: unpausing video')
-    playerImplementation.play()
+    player.play()
 }
 
 // @ts-ignore
 window.pauseVideo = () => {
     console.log('onClick: pausing video')
-    playerImplementation.pause()
+    player.pause()
 }
 
 // @ts-ignore
 window.jump = (stepMs: number) => {
     const ms = Number(videoElement?.currentTime) * 1000 + stepMs
     console.log(`onClick: seeking to ${ms}`)
-    playerImplementation.seekTo(ms)
+    player.seekTo(ms)
 }
 
 const EPG_FROM = new Date('2022-02-16T12:00:00')
@@ -269,7 +154,7 @@ window.setSourceTivio = () => {
         // continueFromPosition: 15 * 60 * 1000,
     }
 
-    playerImplementation.setSource(source)
+    player.setSource(source)
 }
 
 // @ts-ignore
