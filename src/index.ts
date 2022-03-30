@@ -164,7 +164,7 @@ const CHANNEL_NAME = "Prima"
 window.setSourceTivio = () => {
     console.log('onClick: setting source')
 
-    const START_OVERLAP = 1000 * 60 * 2
+    const START_OVERLAP = 1000 * 60 * 6 // start overlap which is in the test stream
     const streamStart = new Date(EPG_FROM.getTime() - START_OVERLAP)
 
     const source: Source | null = {
