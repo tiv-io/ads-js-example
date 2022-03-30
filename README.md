@@ -9,6 +9,9 @@ https://www.npmjs.com/package/@tivio/ads-js
 
 ## Get started
 
+1. Replace `XXXXXXXXX` with the secret which was provided to you.
+2. Then run:
+
 ```bash
 yarn install
 yarn dev
