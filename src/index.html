@@ -21,9 +21,30 @@
             <video
                 style="
                     background-color: black;
-                    height: 420px;"
+                    height: 540px;
+                    width: 960px;"
                 autoplay
-            ></video>
+            >
+            </video>
+            <div>
+                <div style="
+                    margin-top: 10px;
+                    border: 1px solid #222;
+                    background-color: #aaa;
+                    border-radius: 5px;
+                    width: 960px; height: 10px;"
+                >
+                </div>
+                <div id="slider" style="
+                    position: relative;
+                    margin-top: -15px;
+                    border: 2px solid #111;
+                    border-radius: 2px;
+                    width: 0px; height: 14px;
+                    left: 0px;"
+                >
+                </div>
+            </div>
             <div>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="setSourceTivio()">Set source</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="pauseVideo()">Pause</button>

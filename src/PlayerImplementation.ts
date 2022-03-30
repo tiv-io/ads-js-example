@@ -72,7 +72,6 @@ import type { Source } from '@tivio/ads-js'
                 console.log(`${this._prefix}: Signalling timeupdate to Tivio ${ms} ms`)
                 listener(ms)
             }
-
         })
     }
 
@@ -89,6 +88,12 @@ import type { Source } from '@tivio/ads-js'
             console.log(`${this._prefix}: Signalling error to Tivio`)
 
             listener(new Error('Failed to play'))
+        })
+    }
+
+    addDurationListener(listener: (ms: number) => void) {
+        this.videoElement.addEventListener('durationchange', event => {
+            listener(this.videoElement.duration * 1000)
         })
     }
 }
