@@ -48,6 +48,7 @@ function getDynamicElements() {
         jumpForward: document.getElementById('jumpForward'),
         jumpBackward: document.getElementById('jumpBackward'),
         slider: document.getElementById('slider'),
+        currentPosition: document.getElementById('currentPosition'),
     } as {[key: string]: HTMLElement | HTMLButtonElement}
 }
 
@@ -97,6 +98,14 @@ const positionListener = (msFromStart: number) => {
     const pxFromStart = Math.trunc((PROGRESS_WIDTH * percentFromStart) / 100)
 
     dynamicElements.slider.style.left = pxFromStart.toString() + 'px'
+
+    const minutes = Math.floor(msFromStart / 60000)
+    const seconds = Math.floor(((msFromStart % 60000) / 1000))
+
+    const time = minutes + ":" + (seconds < 10 ? '0' : '') + seconds
+
+    dynamicElements.currentPosition.style.left = pxFromStart.toString() + 'px'
+    dynamicElements.currentPosition.innerHTML = time
 }
 
 const durationListener = (ms: number) => {
