@@ -135,7 +135,10 @@ window.setSourceTivio = () => {
         type: 'tv_program',
         // TODO replace with your TV program video URI
         // (this example is program "Receptář prima nápadů" from 2022-03-27 11:45 - 12:30 at Prima TV channel)
-        uri: 'https://cdn3.tiv.io/tivio-production-videos-output/x720GbG3Jys0ZEdLYr2j/tOknPggQOLX6K8XlQe0K/h264/main.m3u8',
+        // HLS
+        // uri: 'https://cdn3.tiv.io/tivio-production-videos-output/x720GbG3Jys0ZEdLYr2j/tOknPggQOLX6K8XlQe0K/h264/main.m3u8',
+        // DASH
+        uri: 'https://cdn3.tiv.io/tivio-production-videos-output/x720GbG3Jys0ZEdLYr2j/tOknPggQOLX6K8XlQe0K/h264/manifest.mpd',
         tvMode: 'timeshift',
         // channel name
         // can also be prima hd, prima_hd, prima, Prima, PRIMA, etc.
