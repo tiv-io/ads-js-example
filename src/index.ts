@@ -49,6 +49,7 @@ function getDynamicElements() {
         jumpBackward: document.getElementById('jumpBackward'),
         slider: document.getElementById('slider'),
         currentPosition: document.getElementById('currentPosition'),
+        duration: document.getElementById('duration'),
     } as {[key: string]: HTMLElement | HTMLButtonElement}
 }
 
@@ -92,6 +93,13 @@ function adMetadataListener(adMetadata: AdMetadata) {
 
 let currentVideoDurationMs = 0
 
+const getMmSs = (ms: number) => {
+    const minutes = Math.floor(ms / 60000)
+    const seconds = Math.floor(((ms % 60000) / 1000))
+
+    return minutes + ":" + (seconds < 10 ? '0' : '') + seconds
+}
+
 const positionListener = (msFromStart: number) => {
     const PROGRESS_WIDTH = 960
     const percentFromStart = (msFromStart * 100) / currentVideoDurationMs
@@ -99,17 +107,14 @@ const positionListener = (msFromStart: number) => {
 
     dynamicElements.slider.style.left = pxFromStart.toString() + 'px'
 
-    const minutes = Math.floor(msFromStart / 60000)
-    const seconds = Math.floor(((msFromStart % 60000) / 1000))
-
-    const time = minutes + ":" + (seconds < 10 ? '0' : '') + seconds
-
     dynamicElements.currentPosition.style.left = pxFromStart.toString() + 'px'
-    dynamicElements.currentPosition.innerHTML = time
+    dynamicElements.currentPosition.innerHTML = getMmSs(msFromStart)
 }
 
 const durationListener = (ms: number) => {
     currentVideoDurationMs = ms
+
+    dynamicElements.duration.innerHTML = getMmSs(ms)
 }
 
 let videoElement: HTMLVideoElement | null = null
