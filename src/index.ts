@@ -45,6 +45,8 @@ function getDynamicElements() {
         isSkippable: document.getElementById('isSkippable'),
         skip: document.getElementById('skip'),
         programTimestamps: document.getElementById('programTimestamps'),
+        jumpForward: document.getElementById('jumpForward'),
+        jumpBackward: document.getElementById('jumpBackward') as HTMLButtonElement,
     } as {[key: string]: HTMLElement | HTMLButtonElement}
 }
 
@@ -68,7 +70,9 @@ function adMetadataListener(adMetadata: AdMetadata) {
         dynamicElements.canSkip.innerHTML = adMetadata.canTriggerSkip ? 'true' : 'false'
         dynamicElements.isSkippable.innerHTML = adMetadata.isSkippable ? 'true' : 'false'
         dynamicElements.skip.onclick = adMetadata.canTriggerSkip ? adMetadata.skip : () => {}
-        (dynamicElements.skip as HTMLButtonElement).disabled = adMetadata.canTriggerSkip ? false : true
+        (dynamicElements.skip as HTMLButtonElement).disabled = adMetadata.canTriggerSkip ? false : true;
+        (dynamicElements.jumpForward as HTMLButtonElement).disabled = true;
+        (dynamicElements.jumpBackward as HTMLButtonElement).disabled = true
     } else {
         dynamicElements.subType.innerHTML = ''
         dynamicElements.order.innerHTML = ''
@@ -78,7 +82,9 @@ function adMetadataListener(adMetadata: AdMetadata) {
         dynamicElements.canSkip.innerHTML = ''
         dynamicElements.isSkippable.innerHTML = ''
         dynamicElements.skip.onclick = () => {}
-        (dynamicElements.skip as HTMLButtonElement).disabled = true
+        (dynamicElements.skip as HTMLButtonElement).disabled = true;
+        (dynamicElements.jumpForward as HTMLButtonElement).disabled = false;
+        (dynamicElements.jumpBackward as HTMLButtonElement).disabled = false
     }
 }
 
