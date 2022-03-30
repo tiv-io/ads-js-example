@@ -1,15 +1,28 @@
+import { Player as ShakaPlayer, polyfill } from 'shaka-player'
+
 import type { Source } from '@tivio/ads-js'
 
 /**
  * Internal player implementation which handles low-level player
  */
  export class PlayerImplementation {
-    _prefix = 'InternalPlayerImplementation'
+    _prefix = 'PlayerImplementation'
     videoElement: HTMLVideoElement
     lastMs: number | null = null
+    shakaPlayer: ShakaPlayer
 
     constructor(videoElement: HTMLVideoElement) {
         this.videoElement = videoElement
+
+        polyfill.installAll()
+
+        if (ShakaPlayer.isBrowserSupported()) {
+            this.shakaPlayer = new ShakaPlayer(videoElement)
+
+            console.log('Shaka player created.');
+        } else {
+            throw new Error('Browser is not supported by Shaka Player!');
+        }
     }
 
     play() {
@@ -32,28 +45,19 @@ import type { Source } from '@tivio/ads-js'
         this.videoElement.currentTime = seconds
     }
 
-    resetVideo() {
-        console.log(`${this._prefix}: resetVideo`)
-
-        this.videoElement.pause()
-        this.videoElement.removeAttribute('src')
-        this.videoElement.load()
-    }
-
-    setSource(source: Source | null) {
+    async setSource(source: Source | null) {
         console.log(`${this._prefix}: setSource`)
 
         if (!source) {
             return
         }
 
-        this.resetVideo()
-
-        this.videoElement.src = source.uri
+        await this.shakaPlayer.unload()
 
         if ('startFromPosition' in source && source.startFromPosition) {
-            // TODO use seekTo
-            this.videoElement.currentTime = source.startFromPosition / 1000
+            this.shakaPlayer.load(source.uri, source.startFromPosition / 1000)
+        } else {
+            this.shakaPlayer.load(source.uri)
         }
 
         this.play()
