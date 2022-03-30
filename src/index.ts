@@ -46,7 +46,8 @@ function getDynamicElements() {
         skip: document.getElementById('skip'),
         programTimestamps: document.getElementById('programTimestamps'),
         jumpForward: document.getElementById('jumpForward'),
-        jumpBackward: document.getElementById('jumpBackward') as HTMLButtonElement,
+        jumpBackward: document.getElementById('jumpBackward'),
+        slider: document.getElementById('slider'),
     } as {[key: string]: HTMLElement | HTMLButtonElement}
 }
 
@@ -88,6 +89,19 @@ function adMetadataListener(adMetadata: AdMetadata) {
     }
 }
 
+let currentVideoDurationMs = 0
+
+const positionListener = (msFromStart: number) => {
+    const PROGRESS_WIDTH = 960
+    const percentFromStart = (msFromStart * 100) / currentVideoDurationMs
+    const pxFromStart = Math.trunc((PROGRESS_WIDTH * percentFromStart) / 100)
+
+    dynamicElements.slider.style.left = pxFromStart.toString() + 'px'
+}
+
+const durationListener = (ms: number) => {
+    currentVideoDurationMs = ms
+}
 
 let videoElement: HTMLVideoElement | null = null
 
@@ -103,6 +117,8 @@ window.onload = () => {
     player = new Player(videoElement)
     dynamicElements = getDynamicElements()
     player.addMetadataListenerListener(adMetadataListener)
+    player.addPositionListener(positionListener)
+    player.addDurationListener(durationListener)
 }
 
 // =============== UI buttons handling ===============

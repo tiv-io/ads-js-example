@@ -13,6 +13,7 @@ import type { Source, ListenerAdMetadata, TivioPlayerWrapper } from '@tivio/ads-
     _prefix = 'Player'
     playerImplementation: PlayerImplementation
     tivioPlayerWrapper: TivioPlayerWrapper
+    positionListener: ((ms: number) => void) | null = null
 
     constructor(videoElement: HTMLVideoElement) {
         this.playerImplementation = new PlayerImplementation(videoElement)
@@ -29,7 +30,13 @@ import type { Source, ListenerAdMetadata, TivioPlayerWrapper } from '@tivio/ads-
         }) as TivioPlayerWrapper
 
         this.playerImplementation.addEndedListener(this.tivioPlayerWrapper.reportPlaybackEnded)
-        this.playerImplementation.addTimeupdateListener(this.tivioPlayerWrapper.reportTimeProgress)
+        this.playerImplementation.addTimeupdateListener((ms) => {
+            this.tivioPlayerWrapper.reportTimeProgress(ms)
+
+            if (this.positionListener) {
+                this.positionListener(ms)
+            }
+        })
         this.playerImplementation.addErrorListener(this.tivioPlayerWrapper.reportError)
     }
 
@@ -37,19 +44,31 @@ import type { Source, ListenerAdMetadata, TivioPlayerWrapper } from '@tivio/ads-
         console.log(`${this._prefix}: play`)
         this.playerImplementation.play()
     }
+
     pause() {
         console.log(`${this._prefix}: pause`)
         this.playerImplementation?.pause()
     }
+
     seekTo(ms: number) {
         console.log(`${this._prefix}: seekTo: seeking to position ${ms} through tivioPlayerWrapper`)
         this.tivioPlayerWrapper.seekTo(ms)
     }
+
     setSource(source: Source | null) {
         console.log(`${this._prefix}: setSource: setting source through tivioPlayerWrapper`)
         this.tivioPlayerWrapper.setSource(source)
     }
+
     addMetadataListenerListener(adMetadataListener: ListenerAdMetadata) {
         this.tivioPlayerWrapper.addEventListener(PlayerWrapperEventType.adMetadata, adMetadataListener)
+    }
+
+    addPositionListener(listener: (ms: number) => void) {
+        this.positionListener = listener
+    }
+
+    addDurationListener(listener: (ms: number) => void) {
+        this.playerImplementation.addDurationListener(listener)
     }
 }
