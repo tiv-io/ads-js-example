@@ -120,8 +120,9 @@ window.jump = (stepMs: number) => {
     player.seekTo(ms)
 }
 
-const EPG_FROM = new Date('2022-02-16T12:00:00')
-const EPG_TO = new Date('2022-02-16T13:40:00')
+const EPG_FROM = new Date('2022-03-27T11:45:00')
+const EPG_TO = new Date('2022-03-27T12:30:00')
+const CHANNEL_NAME = "Prima"
 
 // @ts-ignore
 window.setSourceTivio = () => {
@@ -133,7 +134,8 @@ window.setSourceTivio = () => {
     const source: Source | null = {
         type: 'tv_program',
         // TODO replace with your TV program video URI
-        uri: 'https://firebasestorage.googleapis.com/v0/b/tivio-production-input-admin/o/organizations%2Fl0Q4o9TigUUTNe6TYAqR%2Fchannels%2FhL1LtUhcsZuygmi1HjJI%2Fsections%2FNQlUj81wIf0Ev6qQzRIs%2Fvideos%2F2hAoiSigTZ6Q4QyAsWAi.mp4?alt=media&token=041e129c-c034-42c5-8db0-9fb13c0e8d4e',
+        // (this example is program "Receptář prima nápadů" from 2022-03-27 11:45 - 12:30 at Prima TV channel)
+        uri: 'https://cdn3.tiv.io/tivio-production-videos-output/x720GbG3Jys0ZEdLYr2j/tOknPggQOLX6K8XlQe0K/h264/main.m3u8',
         tvMode: 'timeshift',
         // channel name
         // can also be prima hd, prima_hd, prima, Prima, PRIMA, etc.
@@ -146,7 +148,7 @@ window.setSourceTivio = () => {
         // Prima MAX
         // Prima Krimi
         // Prima Star
-        channelName: 'Tivio Test',
+        channelName: CHANNEL_NAME,
         // In order to load markers, we need from, to
         epgFrom: EPG_FROM,
         epgTo: EPG_TO,
@@ -160,7 +162,7 @@ window.setSourceTivio = () => {
 
 // @ts-ignore
 window.getProgramTimestamps = async () => {
-    const programTimestamps = await getProgramTimestamps('Tivio Test', EPG_FROM, EPG_TO)
+    const programTimestamps = await getProgramTimestamps(CHANNEL_NAME, EPG_FROM, EPG_TO)
 
     dynamicElements.programTimestamps.innerHTML = JSON.stringify(programTimestamps)
 }
