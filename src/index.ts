@@ -5,6 +5,7 @@ import { createTivio, getProgramTimestamps } from '@tivio/ads-js'
 import { Player } from './Player'
 
 import type { Conf, Api, Source, AdMetadata } from '@tivio/ads-js'
+
 // =============== Tivio initialization ===============
 
 const conf: Conf = {
