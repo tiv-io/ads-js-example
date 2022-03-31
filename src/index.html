@@ -26,13 +26,14 @@
                 autoplay
             >
             </video>
-            <div style="position: relative;">
+            <div id="progressBar" style="position: relative;">
                 <div style="
                     margin-top: 10px;
                     border: 1px solid #222;
                     background-color: #aaa;
                     border-radius: 5px;
-                    width: 960px; height: 10px;"
+                    width: 960px;
+                    height: 10px;"
                 >
                 </div>
                 <div id="startMarker" style="
@@ -40,7 +41,8 @@
                     margin-top: -12px;
                     border: 2px solid #555;
                     border-radius: 2px;
-                    width: 0px; height: 8px;
+                    width: 0px;
+                    height: 8px;
                     display: none;
                     left: 0px;"
                 >
@@ -50,7 +52,8 @@
                     margin-top: -15px;
                     border: 2px solid #111;
                     border-radius: 2px;
-                    width: 0px; height: 14px;
+                    width: 0px;
+                    height: 14px;
                     left: 0px;"
                 >
                 </div>
@@ -77,7 +80,7 @@
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="pauseVideo()">Pause</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="unpauseVideo()">Unpause</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="jump(-10000)" id="jumpBackward">&lt;&lt; -10s</button>
-                <button style="margin: 20px 7px; cursor: pointer;" onClick="jump(10000)" id="jumpForward">+10s &gt;&gt;</button>
+                <button style="margin: 20px 7px; cursor: pointer;" onClick="jump(60000)" id="jumpForward">+60s &gt;&gt;</button>
                 <button style="margin: 20px 7px; cursor: pointer;" onClick="getProgramTimestamps()">Get program timestamps</button>
             </div>
             <div>

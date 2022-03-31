@@ -123,10 +123,31 @@ const durationListener = (ms: number) => {
     dynamicElements.duration.innerHTML = getMmSs(ms)
 
     // duration can come after markersListener has been already called so we need to recalculate markers position again
+    resetStartMarker()
+    resetAdMarkers()
     setMarkersPosition(lastMarkers)
 }
 
 let lastMarkers: Marker[] | null = null
+
+const resetStartMarker = () => {
+    dynamicElements.startMarker.style.left = '0px'
+    dynamicElements.startMarker.style.display = 'none'
+}
+
+const resetAdMarkers = () => {
+    const progressBarElement = document.getElementById('progressBar')
+
+    adMarkerElements.forEach((marker) => {
+        progressBarElement?.removeChild(marker)
+    })
+
+    adMarkerElements = []
+    adMarkers = []
+}
+
+let adMarkerElements: HTMLDivElement[] = []
+let adMarkers: Marker[] = []
 
 const setMarkersPosition = (markers: Marker[] | null) => {
     if (markers && markers.length) {
@@ -138,12 +159,45 @@ const setMarkersPosition = (markers: Marker[] | null) => {
             dynamicElements.startMarker.style.left = pxFromStart.toString() + 'px'
             dynamicElements.startMarker.style.display = 'block'
         } else {
-            dynamicElements.startMarker.style.left = '0px'
-            dynamicElements.startMarker.style.display = 'none'
+            resetStartMarker()
+        }
+
+        const incomingAdMarkers = markers.filter(marker => marker.type === "AD_SEGMENT")
+
+        if (incomingAdMarkers.length) {
+            if (currentVideoDurationMs) {
+                incomingAdMarkers.forEach((marker) => {
+                    if (!adMarkers.some(existingMarker => existingMarker.id === marker.id)) {
+                        let element = document.createElement('div')
+                        const styles: Partial<CSSStyleDeclaration> = {
+                            height: '10px',
+                            backgroundColor: 'yellow',
+                            position: 'absolute',
+                            marginTop: '-16px',
+                        }
+
+                        const adStartPx = calculatePositionInProgressBar(marker.relativeFromMs)
+                        const adEndPx = calculatePositionInProgressBar(marker.relativeToMs)
+                        styles.left = adStartPx + 'px'
+                        styles.width = (adEndPx - adStartPx) + 'px'
+
+                        Object.assign(element.style, styles);
+
+                        adMarkerElements.push(element)
+                        adMarkers.push(marker)
+
+                        const progressBarElement = document.getElementById('progressBar')
+
+                        progressBarElement?.appendChild(element)
+                    }
+                })
+            }
+        } else {
+            resetAdMarkers()
         }
     } else {
-        dynamicElements.startMarker.style.left = '0px'
-        dynamicElements.startMarker.style.display = 'none'
+        resetStartMarker()
+        resetAdMarkers()
     }
 }
 
