@@ -32,7 +32,7 @@ createTivio(conf)
         console.error(error)
     })
 
-// =============== app init, creating player, registering listener ===============
+// =============== app init, creating player, registering listeners, markers handling ===============
 
 function getDynamicElements() {
     return {
