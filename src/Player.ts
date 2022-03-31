@@ -2,7 +2,7 @@ import { createPlayerWrapper, PlayerWrapperEventType } from '@tivio/ads-js'
 
 import { PlayerImplementation } from './PlayerImplementation'
 
-import type { Source, ListenerAdMetadata, TivioPlayerWrapper } from '@tivio/ads-js'
+import type { Source, ListenerAdMetadata, ListenerMarkers, TivioPlayerWrapper } from '@tivio/ads-js'
 
 
 /**
@@ -60,8 +60,12 @@ import type { Source, ListenerAdMetadata, TivioPlayerWrapper } from '@tivio/ads-
         this.tivioPlayerWrapper.setSource(source)
     }
 
-    addMetadataListenerListener(adMetadataListener: ListenerAdMetadata) {
+    addAdMetadataListener(adMetadataListener: ListenerAdMetadata) {
         this.tivioPlayerWrapper.addEventListener(PlayerWrapperEventType.adMetadata, adMetadataListener)
+    }
+
+    addMarkersListener(markersListener: ListenerMarkers) {
+        this.tivioPlayerWrapper.addEventListener(PlayerWrapperEventType.markers, markersListener)
     }
 
     addPositionListener(listener: (ms: number) => void) {
