@@ -16,3 +16,11 @@ https://www.npmjs.com/package/@tivio/ads-js
 yarn install
 yarn dev
 ```
+
+## Preview
+
+![Screenshot](screenshot.png)
+
+## Notes
+
+* There is a problem with autoplay in Safari, please use the "Unpause" button to start the playback.
