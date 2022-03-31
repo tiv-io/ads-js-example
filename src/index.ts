@@ -4,7 +4,7 @@ import { createTivio, getProgramTimestamps } from '@tivio/ads-js'
 
 import { Player } from './Player'
 
-import type { Conf, Api, Source, AdMetadata } from '@tivio/ads-js'
+import type { AdMetadata, Api, Conf, Marker, Source } from '@tivio/ads-js'
 
 // =============== Tivio initialization ===============
 
@@ -50,6 +50,7 @@ function getDynamicElements() {
         slider: document.getElementById('slider'),
         currentPosition: document.getElementById('currentPosition'),
         duration: document.getElementById('duration'),
+        startMarker: document.getElementById('startMarker'),
     } as {[key: string]: HTMLElement | HTMLButtonElement}
 }
 
@@ -100,10 +101,15 @@ const getMmSs = (ms: number) => {
     return minutes + ":" + (seconds < 10 ? '0' : '') + seconds
 }
 
-const positionListener = (msFromStart: number) => {
+const calculatePositionInProgressBar = (msFromStart: number) => {
     const PROGRESS_WIDTH = 960
     const percentFromStart = (msFromStart * 100) / currentVideoDurationMs
-    const pxFromStart = Math.trunc((PROGRESS_WIDTH * percentFromStart) / 100)
+
+    return Math.trunc((PROGRESS_WIDTH * percentFromStart) / 100)
+}
+
+const positionListener = (msFromStart: number) => {
+    const pxFromStart = calculatePositionInProgressBar(msFromStart)
 
     dynamicElements.slider.style.left = pxFromStart.toString() + 'px'
 
@@ -115,6 +121,35 @@ const durationListener = (ms: number) => {
     currentVideoDurationMs = ms
 
     dynamicElements.duration.innerHTML = getMmSs(ms)
+
+    // duration can come after markersListener has been already called so we need to recalculate markers position again
+    setMarkersPosition(lastMarkers)
+}
+
+let lastMarkers: Marker[] | null = null
+
+const setMarkersPosition = (markers: Marker[] | null) => {
+    if (markers && markers.length) {
+        const startMarker = markers.find(marker => marker.type === "START")
+
+        if (startMarker) {
+            const pxFromStart = calculatePositionInProgressBar(startMarker.relativeFromMs)
+
+            dynamicElements.startMarker.style.left = pxFromStart.toString() + 'px'
+            dynamicElements.startMarker.style.display = 'block'
+        } else {
+            dynamicElements.startMarker.style.left = '0px'
+            dynamicElements.startMarker.style.display = 'none'
+        }
+    } else {
+        dynamicElements.startMarker.style.left = '0px'
+        dynamicElements.startMarker.style.display = 'none'
+    }
+}
+
+const markersListener = (markers: Marker[] | null) => {
+    lastMarkers = markers
+    setMarkersPosition(markers)
 }
 
 let videoElement: HTMLVideoElement | null = null
@@ -130,9 +165,10 @@ window.onload = () => {
 
     player = new Player(videoElement)
     dynamicElements = getDynamicElements()
-    player.addMetadataListenerListener(adMetadataListener)
+    player.addAdMetadataListener(adMetadataListener)
     player.addPositionListener(positionListener)
     player.addDurationListener(durationListener)
+    player.addMarkersListener(markersListener)
 }
 
 // =============== UI buttons handling ===============

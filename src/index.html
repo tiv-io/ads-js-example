@@ -26,7 +26,7 @@
                 autoplay
             >
             </video>
-            <div>
+            <div style="position: relative;">
                 <div style="
                     margin-top: 10px;
                     border: 1px solid #222;
@@ -35,8 +35,18 @@
                     width: 960px; height: 10px;"
                 >
                 </div>
+                <div id="startMarker" style="
+                    position: absolute;
+                    margin-top: -12px;
+                    border: 2px solid #555;
+                    border-radius: 2px;
+                    width: 0px; height: 8px;
+                    display: none;
+                    left: 0px;"
+                >
+                </div>
                 <div id="slider" style="
-                    position: relative;
+                    position: absolute;
                     margin-top: -15px;
                     border: 2px solid #111;
                     border-radius: 2px;
@@ -45,6 +55,7 @@
                 >
                 </div>
                 <div style="
+                    margin-top: 5px;
                     position: relative;
                     margin-left: -10px;
                     left: 0px;"
