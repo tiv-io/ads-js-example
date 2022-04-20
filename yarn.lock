@@ -386,10 +386,10 @@
     "@sentry/types" "6.19.2"
     tslib "^1.9.3"
 
-"@tivio/ads-js@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@tivio/ads-js/-/ads-js-1.0.1.tgz#7584912139cb809dbc619c893611f039b6eed42f"
-  integrity sha512-3rKeZYraJcEu1EDaapULJKjf20vifN7cEPecCv7amvHpCSTAOrth57Y9KMquMuuLD2DIr0/SPx9za8dG4MEpAg==
+"@tivio/ads-js@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@tivio/ads-js/-/ads-js-1.0.2.tgz#a394a5b0cc7ca55a9f2312199e87cf3e29c2f952"
+  integrity sha512-jy+ORve44zOsSeoJKpXIO4WCvzVWHLsafwVlBzp74+7u5Blc/F5RppP6b72anm28nc6IVE1E1dV9bm16h4kvVg==
   dependencies:
     "@sentry/browser" "^6.1.0"
     "@tivio/common" "*"
