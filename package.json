@@ -4,6 +4,7 @@
     "description": "Minimal example of Tivio SDK/JS",
     "main": "index.js",
     "scripts": {
+        "start": "webpack serve --open",
         "dev": "webpack serve",
         "build": "webpack"
     },
