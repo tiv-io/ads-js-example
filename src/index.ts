@@ -21,7 +21,7 @@ createTivio(conf)
         }
 
         if (api.error) {
-            console.error(`Tivio init error: ${api.error}`, )
+            console.error(`Tivio init error: ${api.error}`,)
             return
         }
 
@@ -51,10 +51,10 @@ function getDynamicElements() {
         currentPosition: document.getElementById('currentPosition'),
         duration: document.getElementById('duration'),
         startMarker: document.getElementById('startMarker'),
-    } as {[key: string]: HTMLElement | HTMLButtonElement}
+    } as { [key: string]: HTMLElement | HTMLButtonElement }
 }
 
-let dynamicElements: {[key: string]: HTMLElement | HTMLButtonElement}
+let dynamicElements: { [key: string]: HTMLElement | HTMLButtonElement }
 
 function adMetadataListener(adMetadata: AdMetadata) {
     console.log('AdMetadata: ', adMetadata)
@@ -73,7 +73,7 @@ function adMetadataListener(adMetadata: AdMetadata) {
         dynamicElements.secondsToEnd.innerHTML = adMetadata.secondsToEnd.toString()
         dynamicElements.canSkip.innerHTML = adMetadata.canTriggerSkip ? 'true' : 'false'
         dynamicElements.isSkippable.innerHTML = adMetadata.isSkippable ? 'true' : 'false'
-        dynamicElements.skip.onclick = adMetadata.canTriggerSkip ? adMetadata.skip : () => {}
+        dynamicElements.skip.onclick = adMetadata.canTriggerSkip ? adMetadata.skip : () => { }
         (dynamicElements.skip as HTMLButtonElement).disabled = adMetadata.canTriggerSkip ? false : true;
         (dynamicElements.jumpForward as HTMLButtonElement).disabled = true;
         (dynamicElements.jumpBackward as HTMLButtonElement).disabled = true
@@ -85,14 +85,22 @@ function adMetadataListener(adMetadata: AdMetadata) {
         dynamicElements.secondsToEnd.innerHTML = ''
         dynamicElements.canSkip.innerHTML = ''
         dynamicElements.isSkippable.innerHTML = ''
-        dynamicElements.skip.onclick = () => {}
+        dynamicElements.skip.onclick = () => { }
         (dynamicElements.skip as HTMLButtonElement).disabled = true;
         (dynamicElements.jumpForward as HTMLButtonElement).disabled = false;
         (dynamicElements.jumpBackward as HTMLButtonElement).disabled = false
     }
 }
 
-let currentVideoDurationMs = 0
+type ProgressBarData = {
+    durationMs: number | null
+    markers: Marker[]
+}
+
+const progressBarData: ProgressBarData = {
+    durationMs: null,
+    markers: []
+}
 
 const getMmSs = (ms: number) => {
     const minutes = Math.floor(ms / 60000)
@@ -101,15 +109,19 @@ const getMmSs = (ms: number) => {
     return minutes + ":" + (seconds < 10 ? '0' : '') + seconds
 }
 
-const calculatePositionInProgressBar = (msFromStart: number) => {
+const calculatePositionInProgressBar = (msFromStart: number, durationMs: number) => {
     const PROGRESS_WIDTH = 960
-    const percentFromStart = (msFromStart * 100) / currentVideoDurationMs
+    const percentFromStart = (msFromStart * 100) / durationMs
 
     return Math.trunc((PROGRESS_WIDTH * percentFromStart) / 100)
 }
 
 const positionListener = (msFromStart: number) => {
-    const pxFromStart = calculatePositionInProgressBar(msFromStart)
+    if (progressBarData.durationMs == null) {
+        return
+    }
+
+    const pxFromStart = calculatePositionInProgressBar(msFromStart, progressBarData.durationMs)
 
     dynamicElements.slider.style.left = pxFromStart.toString() + 'px'
 
@@ -118,92 +130,109 @@ const positionListener = (msFromStart: number) => {
 }
 
 const durationListener = (ms: number) => {
-    currentVideoDurationMs = ms
-
+    progressBarData.durationMs = ms
     dynamicElements.duration.innerHTML = getMmSs(ms)
 
-    // duration can come after markersListener has been already called so we need to recalculate markers position again
-    resetStartMarker()
-    resetAdMarkers()
-    setMarkersPosition(lastMarkers)
+    renderMarkers()
 }
 
-let lastMarkers: Marker[] | null = null
+const renderMarkers = () => {
+    resetMarkers()
+
+    const { markers, durationMs } = progressBarData
+
+    if (markers.length > 0 && durationMs != null) {
+        setMarkersPosition(markers, durationMs)
+    }
+}
+
+const resetMarkers = () => {
+    resetStartMarker()
+    removeAdMarkers()
+}
 
 const resetStartMarker = () => {
     dynamicElements.startMarker.style.left = '0px'
     dynamicElements.startMarker.style.display = 'none'
 }
 
-const resetAdMarkers = () => {
+const getProgressBarElement = () => {
     const progressBarElement = document.getElementById('progressBar')
 
+    if (!progressBarElement) {
+        throw new Error('Progress bar element #progressBar not found.')
+    }
+
+    return progressBarElement
+}
+
+const removeAdMarkers = () => {
+    const progressBarElement = getProgressBarElement()
+
     adMarkerElements.forEach((marker) => {
-        progressBarElement?.removeChild(marker)
+        progressBarElement.removeChild(marker)
     })
 
     adMarkerElements = []
-    adMarkers = []
 }
 
 let adMarkerElements: HTMLDivElement[] = []
-let adMarkers: Marker[] = []
 
-const setMarkersPosition = (markers: Marker[] | null) => {
-    if (markers && markers.length) {
-        const startMarker = markers.find(marker => marker.type === "START")
+const createAdMarkerElement = (marker: Marker, durationMs: number) => {
+    let element = document.createElement('div')
+    const styles: Partial<CSSStyleDeclaration> = {
+        height: '10px',
+        backgroundColor: 'yellow',
+        position: 'absolute',
+        marginTop: '-16px',
+    }
 
-        if (startMarker) {
-            const pxFromStart = calculatePositionInProgressBar(startMarker.relativeFromMs)
+    const adStartPx = calculatePositionInProgressBar(marker.relativeFromMs, durationMs)
+    const adEndPx = calculatePositionInProgressBar(marker.relativeToMs, durationMs)
 
-            dynamicElements.startMarker.style.left = pxFromStart.toString() + 'px'
-            dynamicElements.startMarker.style.display = 'block'
-        } else {
-            resetStartMarker()
-        }
+    styles.left = adStartPx + 'px'
+    styles.width = (adEndPx - adStartPx) + 'px'
 
-        const incomingAdMarkers = markers.filter(marker => marker.type === "AD_SEGMENT")
+    Object.assign(element.style, styles)
 
-        if (incomingAdMarkers.length) {
-            if (currentVideoDurationMs) {
-                incomingAdMarkers.forEach((marker) => {
-                    if (!adMarkers.some(existingMarker => existingMarker.id === marker.id)) {
-                        let element = document.createElement('div')
-                        const styles: Partial<CSSStyleDeclaration> = {
-                            height: '10px',
-                            backgroundColor: 'yellow',
-                            position: 'absolute',
-                            marginTop: '-16px',
-                        }
+    return element
+}
 
-                        const adStartPx = calculatePositionInProgressBar(marker.relativeFromMs)
-                        const adEndPx = calculatePositionInProgressBar(marker.relativeToMs)
-                        styles.left = adStartPx + 'px'
-                        styles.width = (adEndPx - adStartPx) + 'px'
+const setMarkersPosition = (markers: Marker[], durationMs: number) => {
+    if (markers.length === 0) {
+        return
+    }
 
-                        Object.assign(element.style, styles);
+    setStartMarkerPosition(markers, durationMs)
+    renderAdMarkers(markers, durationMs)
+}
 
-                        adMarkerElements.push(element)
-                        adMarkers.push(marker)
+const setStartMarkerPosition = (markers: Marker[], durationMs: number) => {
+    const startMarker = markers.find(marker => marker.type === "START")
 
-                        const progressBarElement = document.getElementById('progressBar')
+    if (startMarker) {
+        const pxFromStart = calculatePositionInProgressBar(startMarker.relativeFromMs, durationMs)
 
-                        progressBarElement?.appendChild(element)
-                    }
-                })
-            }
-        } else {
-            resetAdMarkers()
-        }
-    } else {
-        resetStartMarker()
-        resetAdMarkers()
+        dynamicElements.startMarker.style.left = pxFromStart.toString() + 'px'
+        dynamicElements.startMarker.style.display = 'block'
     }
 }
 
+const renderAdMarkers = (markers: Marker[], durationMs: number) => {
+    const incomingAdMarkers = markers.filter(marker => marker.type === "AD_SEGMENT")
+    const progressBarElement = getProgressBarElement()
+
+    incomingAdMarkers.forEach((marker) => {
+        const element = createAdMarkerElement(marker, durationMs)
+
+        progressBarElement.appendChild(element)
+        adMarkerElements.push(element)
+    })
+}
+
 const markersListener = (markers: Marker[] | null) => {
-    lastMarkers = markers
-    setMarkersPosition(markers)
+    progressBarData.markers = markers ?? []
+    renderMarkers()
 }
 
 let videoElement: HTMLVideoElement | null = null
