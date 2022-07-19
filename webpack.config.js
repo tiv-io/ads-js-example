@@ -39,14 +39,12 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: [ '.ts', '.tsx', '.js' ],
+        extensions: ['.ts', '.tsx', '.js'],
     },
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
         port: 3000,
     },
     plugins: [
-        new webpack.DefinePlugin({}),
         new HtmlWebPackPlugin({
             template: path.resolve(__dirname, './src/index.html'),
             filename: path.resolve(__dirname, './dist/index.html'),
@@ -55,5 +53,4 @@ module.exports = {
             inject: 'head',
         }),
     ],
-    target: ['web', 'es5'],
 }
